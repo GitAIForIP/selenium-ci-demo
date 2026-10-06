@@ -1,0 +1,42 @@
+yaml
+#Workflow ka naam. GitHub ke Actions tab mein isi naam se dikhta hai. Sirf display — koi technical kaam nahi.
+name: Selenium Java CI
+
+#push + branches: [main] → main branch pe push hote hi chalegi
+#pull_request → koi bhi PR bane ya usme commit aaye, toh chalegi
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+#jobs: ke andar job define hoti hai. Job ka naam test (koi bhi naam ho sakta hai). Abhi ek hi job hai; multiple jobs #parallel chalte hain.
+#Job kis machine pe chalegi. GitHub ek fresh Ubuntu machine deta hai — har run pe bilkul saaf, khaali. Isliye sab kuch #zero se setup karna padta hai.
+jobs:
+  test:
+    runs-on: ubuntu-latest
+#Steps ki list. Yeh upar se neeche, ek ke baad ek chalte hain. Koi step fail ho, toh uske baad wale nahi chalte, job fail.
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+#name: → step ka label, sirf display
+#uses: → pre-built action use kar raha hai (apna code nahi likhna)
+#actions/checkout@v4 → GitHub ka official action jo tumhara repo code us machine pe copy karta hai; @v4 version
+#Kyun: machine khaali hoti hai — tumhari files usme nahi. Bina checkout, pom.xml aur tests nahi milenge. Isliye yeh #hamesha pehla step.      
+
+- name: Set up JDK 17
+#uses: actions/setup-java@v4 → machine pe Java install karta hai        
+        uses: actions/setup-java@v4
+#is action ko input parameters dena
+#java-version: "17" → JDK 17 chahiye (pom.xml se match karna chahiye)        
+with:
+          java-version: "17"
+#distribution: "temurin" → JDK ka vendor (Eclipse Temurin). Ye batana zaroori hai, warna action ko nahi pata kis build ko #laana hai    
+#Kyun: fresh machine pe Java nahi hota, aur mvn bina Java ke nahi chalti.      
+distribution: "temurin"
+
+      - name: Run Selenium tests (Maven)
+        run: mvn clean test
+#run: → seedha shell command chalao (jaise terminal pe)
+#mvn → Maven; pom.xml padhta hai
+#clean → pichla target/ folder delete (fresh build)
+#test → lifecycle phase: dependencies download → test code compile → Surefire plugin trigger → testng.xml padho → TestNG #tests run
