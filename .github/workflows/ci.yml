@@ -1,4 +1,4 @@
-yaml
+#yaml
 #Workflow ka naam. GitHub ke Actions tab mein isi naam se dikhta hai. Sirf display — koi technical kaam nahi.
 name: Selenium Java CI
 
