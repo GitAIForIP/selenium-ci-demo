@@ -20,4 +20,6 @@ jobs:
           distribution: "temurin"
 
       - name: Run Selenium tests (Maven)
+
         run: mvn clean test
+
